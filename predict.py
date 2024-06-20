@@ -22,6 +22,8 @@ class Predictor(BasePredictor):
     def setup(self):
         """Load the model into memory to make running multiple predictions efficient"""
         self.model, self.model_config = self._load_model()
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.model = self.model.to(device=self.device)
 
     def _load_model(
         self,
@@ -41,14 +43,13 @@ class Predictor(BasePredictor):
         prompt: str = Input(),
         negative_prompt: str = Input(default=""),
         seconds_start: int = Input(default=0),
-        seconds_total: int = Input(default=30),
+        seconds_total: int = Input(default=8),
         cfg_scale: float = Input(default=6.0),
-        steps: int = Input(default=250),
+        steps: int = Input(default=100),
         seed: int = Input(default=-1),
         sampler_type: str = Input(default="dpmpp-3m-sde"),
         sigma_min: float = Input(default=0.03),
-        sigma_max: int = Input(default=1000),
-        cfg_rescale: float = Input(default=0.0),
+        sigma_max: int = Input(default=500),
         init_noise_level: float = Input(default=1.0),
         batch_size: int = Input(default=1),
     ) -> Path:
@@ -82,8 +83,6 @@ class Predictor(BasePredictor):
         else:
             negative_conditioning = None
 
-        device = next(self.model.parameters()).device
-
         seed = int(seed)
 
         audio = generate_diffusion_cond(
@@ -96,12 +95,11 @@ class Predictor(BasePredictor):
             sample_size=sample_size,
             sample_rate=sample_rate,
             seed=seed,
-            device=device,
+            device=self.device,
             sampler_type=sampler_type,
             sigma_min=sigma_min,
             sigma_max=sigma_max,
             init_noise_level=init_noise_level,
-            scale_phi=cfg_rescale,
         )
 
         audio = rearrange(audio, "b d n -> d (b n)")
