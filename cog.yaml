@@ -43,6 +43,6 @@ build:
     - 'wandb==0.15.4'
     - 'webdataset==0.2.48'
     - 'x-transformers<1.27.0'
-    - 'setuptools-69.5.1'
+    - 'setuptools==69.5.1'
 
 predict: "predict.py:Predictor"

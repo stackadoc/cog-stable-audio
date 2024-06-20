@@ -1,16 +1,21 @@
 # Prediction interface for Cog ⚙️
 # https://github.com/replicate/cog/blob/main/docs/python.md
 
-from os.path import dirname, abspath
-
 import json
-from cog import BasePredictor, Input, Path
+from os.path import abspath, dirname
+
 import torch
 import torchaudio
+from cog import BasePredictor, Input, Path
 from einops import rearrange
+
 from stable_audio_tools.inference.generation import generate_diffusion_cond
 from stable_audio_tools.models.factory import create_model_from_config
 from stable_audio_tools.models.utils import load_ckpt_state_dict
+from weights_downloader import WeightsDownloader
+
+MODEL_PATH = "/src/models/"
+WEIGHTS_STR = "stable-audio-open-1.0"
 
 
 class Predictor(BasePredictor):
@@ -21,12 +26,10 @@ class Predictor(BasePredictor):
     def _load_model(
         self,
     ):
-        model_config_path = (
-            f"{dirname(abspath(__file__))}/stable-audio-open-1.0/model_config.json"
-        )
-        model_ckpt_path = (
-            f"{dirname(abspath(__file__))}/stable-audio-open-1.0/model.ckpt"
-        )
+        weights_downloader = WeightsDownloader()
+        weights_downloader.download_weights(WEIGHTS_STR, MODEL_PATH)
+        model_config_path = f"{MODEL_PATH}/{WEIGHTS_STR}/model_config.json"
+        model_ckpt_path = f"{MODEL_PATH}/{WEIGHTS_STR}/model.ckpt"
         with open(model_config_path) as f:
             model_config = json.load(f)
         model = create_model_from_config(model_config)
