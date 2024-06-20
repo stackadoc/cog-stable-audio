@@ -57,7 +57,7 @@ class Predictor(BasePredictor):
             self.model, self.model_config = self._load_model()
 
         sample_rate = self.model_config["sample_rate"]
-        sample_size = sample_rate * seconds_total
+        sample_size = sample_rate * (seconds_total + 1)
 
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
