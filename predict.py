@@ -14,7 +14,7 @@ from stable_audio_tools.models.factory import create_model_from_config
 from stable_audio_tools.models.utils import load_ckpt_state_dict
 from weights_downloader import WeightsDownloader
 
-MODEL_PATH = "/src/models/"
+MODEL_PATH = "/src/models"
 WEIGHTS_STR = "stable-audio-open-1.0"
 
 

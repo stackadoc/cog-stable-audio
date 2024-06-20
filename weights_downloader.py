@@ -23,6 +23,8 @@ class WeightsDownloader:
         start = time.time()
         print(f"Downloading {weights_str}")
         tar_file_path = f"{dest}/{weights_str}.tar"
+        if not os.path.exists(dest):
+            os.mkdir(dest) 
         subprocess.check_call(
             ["pget", "-vf", model_url, tar_file_path], close_fds=False
         )
