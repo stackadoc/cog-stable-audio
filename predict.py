@@ -43,7 +43,7 @@ class Predictor(BasePredictor):
         prompt: str = Input(),
         negative_prompt: str = Input(default=""),
         seconds_start: int = Input(default=0),
-        seconds_total: int = Input(default=8),
+        seconds_total: int = Input(default=8, le=47),
         cfg_scale: float = Input(default=6.0),
         steps: int = Input(default=100),
         seed: int = Input(default=-1),
@@ -103,6 +103,7 @@ class Predictor(BasePredictor):
         )
 
         audio = rearrange(audio, "b d n -> d (b n)")
+
         audio = (
             audio.to(torch.float32)
             .div(torch.max(torch.abs(audio)))
