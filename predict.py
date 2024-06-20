@@ -57,7 +57,7 @@ class Predictor(BasePredictor):
             self.model, self.model_config = self._load_model()
 
         sample_rate = self.model_config["sample_rate"]
-        sample_size = self.model_config["sample_size"]
+        sample_size = sample_rate * seconds_total
 
         if torch.cuda.is_available():
             torch.cuda.empty_cache()
@@ -112,6 +112,7 @@ class Predictor(BasePredictor):
             .to(torch.int16)
             .cpu()
         )
+
         wav_path = "output.wav"
         torchaudio.save(wav_path, audio, sample_rate)
 
